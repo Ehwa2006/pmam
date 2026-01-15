@@ -36,38 +36,43 @@
 <!-- ✅ QR 로직은 맨 아래 -->
 <script>
 let qr;
-let isProcessing = false;
+let lastScanTime = 0;        // ⏱ 마지막 인식 시점
+const SCAN_COOLDOWN = 3000; // 3초 제한
 
 window.addEventListener("DOMContentLoaded", async () => {
   qr = new Html5Qrcode("reader");
 
   await qr.start(
-    { facingMode: "environment" }, // ✅ 후면 강제
+    { facingMode: "environment" }, // ✅ 후면 카메라 고정
     {
       fps: 10,
       qrbox: { width: 220, height: 220 }
     },
     (qrText) => {
-      if (isProcessing) return;
-      isProcessing = true;
+      const now = Date.now();
+
+      // 🔒 3초 쿨다운
+      if (now - lastScanTime < SCAN_COOLDOWN) return;
+      lastScanTime = now;
 
       const scanned = qrText.trim();
       const spot = Object.values(SPOTS).find(s => s.qr === scanned);
-      if (!spot) {
-        isProcessing = false;
-        return;
-      }
+      if (!spot) return;
 
-      navigator.vibrate?.(150);
+      console.log("✅ QR 인식:", spot.id);
+      navigator.vibrate?.(120);
 
       sessionStorage.setItem("currentSpot", spot.id);
 
-      // ❌ stop / clear 하지 마라 (iOS에서 버그 유발)
-      window.location.href = "ar.html";
+      // ⏳ Safari 안정성용 약간의 딜레이
+      setTimeout(() => {
+        window.location.href = "ar.html";
+      }, 300);
     }
   );
 });
 </script>
+
 
 
 
