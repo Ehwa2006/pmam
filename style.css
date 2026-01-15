@@ -36,14 +36,7 @@ main {
 }
 
 /* ===== QR Reader ===== */
-#reader {
-  width: 100%;
-  max-width: 360px;
-  margin: 0 auto;
-  border-radius: 16px;
-  overflow: hidden;
-  background: #000;
-}
+
 
 /* ===== Status Text ===== */
 #status {
@@ -204,4 +197,28 @@ main {
   background: #fafafa;
   border-radius: 12px;
   font-size: 14px;
+}
+#qrSection {
+  padding: 16px;
+}
+
+
+
+#startScan {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  border-radius: 14px;
+  border: none;
+  background: #ff6b00;
+  color: #fff;
+  margin-bottom: 12px;
+}
+
+#reader {
+  width: 100%;
+  min-height: 320px;
+  background: #000;
+  border-radius: 16px;
+  overflow: hidden;
 }
