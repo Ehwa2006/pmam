@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>이문설농탕 AR</title>
+  <title>AR</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- A-Frame & MindAR -->
@@ -82,91 +82,42 @@
 <body>
 
 <script>
-  // 현재 스팟 불러오기
-  const spotId = sessionStorage.getItem("currentSpot") || "imun";
-  const spot = SPOTS[spotId];
-</script>
+const spotId = sessionStorage.getItem("currentSpot");
 
-<!-- ===== AR Scene ===== -->
-<a-scene
-  mindar-image="imageTargetSrc: assets/targets/img.mind;"
-  embedded
-  vr-mode-ui="enabled:false"
-  device-orientation-permission-ui="enabled:false">
+if (!spotId || !SPOTS[spotId]) {
+  alert("잘못된 접근입니다.");
+  location.href = "index.html";
+}
 
+const spot = SPOTS[spotId];
+const scene = document.getElementById("scene");
+
+/* 🔑 스팟별 AR 타겟 적용 */
+scene.setAttribute(
+  "mindar-image",
+  `imageTargetSrc: ${spot.target};`
+);
+
+/* 🔑 AR 콘텐츠 동적 삽입 */
+scene.innerHTML = `
   <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
 
-  <!-- 이미지 타겟 -->
   <a-entity id="target" mindar-image-target="targetIndex: 0">
-
-    <!-- 4컷 만화 -->
     <a-plane
       position="0 0 0"
       width="1"
       height="1.4"
-      material="src: assets/images/img.jpg; transparent: true"
+      material="src: ${spot.image}; transparent: true"
       animation="property: scale;
                  from: 0 0 0;
                  to: 1 1 1;
                  dur: 600;
                  easing: easeOutBack">
     </a-plane>
-
   </a-entity>
-</a-scene>
-
-<!-- ===== Story ===== -->
-<div id="story">
-  <h3>📍 <span id="spotName"></span></h3>
-  <div id="storyText"></div>
-</div>
-
-<!-- ===== UI Buttons ===== -->
-<div id="ui">
-  <button id="stampBtn" disabled>AR 인식 중...</button>
-  <button id="backBtn">돌아가기</button>
-</div>
-
-<script>
-  /* 스토리 출력 */
-  document.getElementById("spotName").innerText = spot.name;
-  document.getElementById("storyText").innerHTML =
-    spot.story.map(s => `<p>${s}</p>`).join("");
-
-  const stampBtn = document.getElementById("stampBtn");
-  const backBtn = document.getElementById("backBtn");
-
-  /* AR 인식 시 */
-  document
-    .querySelector("#target")
-    .addEventListener("targetFound", () => {
-      stampBtn.disabled = false;
-      stampBtn.classList.add("active");
-      stampBtn.innerText = "스탬프 받기";
-    });
-
-  /* 스탬프 지급 */
-  stampBtn.addEventListener("click", () => {
-    const stamps =
-      JSON.parse(localStorage.getItem("stamps") || "[]");
-
-    if (stamps.includes(spotId)) {
-      alert("이미 스탬프를 받았습니다.");
-      return;
-    }
-
-    stamps.push(spotId);
-    localStorage.setItem("stamps", JSON.stringify(stamps));
-
-    alert("🎉 스탬프를 획득했습니다!");
-    location.href = "index.html";
-  });
-
-  /* 돌아가기 */
-  backBtn.addEventListener("click", () => {
-    location.href = "index.html";
-  });
+`;
 </script>
+
 
 </body>
 </html>

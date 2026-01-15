@@ -8,7 +8,12 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   // URL → SPOT 매핑
   const URL_MAP = {
-  "https://qrly.org/ulf0vw": "SPOT_IMUN"
+  "https://qrly.org/ulf0vw": "SPOT_IMUN",
+  "https://qrly.org/ojDoEZ": "SPOT_GWANGTONG",
+  "https://qrly.org/pGG2sa": "SPOT_JANGTONG",
+  "https://qrly.org/tdBqXF": "SPOT_SUPYO",
+  "https://qrly.org/fFlVg3": "SPOT_SAMIL",
+  "hhttps://qrly.org/dNcTA9": "SPOT_SEWOON"
 };
 
 
