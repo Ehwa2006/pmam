@@ -127,6 +127,27 @@ stampBtn.addEventListener("click", () => {
   alert("🎉 이문설농탕 스탬프 획득!");
   location.href = "stamps.html";
 });
+<div id="ui">
+  <button onclick="completeStamp()">스탬프 받기</button>
+  <button class="back" onclick="goHome()">돌아가기</button>
+</div>
+function completeStamp() {
+  const spotId = sessionStorage.getItem("currentSpot");
+  const stamps = JSON.parse(localStorage.getItem("stamps") || "[]");
+
+  if (!stamps.includes(spotId)) {
+    stamps.push(spotId);
+    localStorage.setItem("stamps", JSON.stringify(stamps));
+    alert("✅ 스탬프를 받았습니다!");
+  } else {
+    alert("이미 받은 스탬프입니다.");
+  }
+}
+
+function goHome() {
+  location.href = "index.html";
+}
+
 </script>
 
 </body>

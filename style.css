@@ -101,3 +101,20 @@ footer {
   color: #ff6b00;
   font-weight: bold;
 }
+#myStamps {
+  margin-top: 24px;
+  padding: 16px;
+  background: #fff;
+  border-radius: 14px;
+}
+
+.stamp-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.stamp-item:last-child {
+  border-bottom: none;
+}
