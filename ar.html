@@ -10,7 +10,44 @@
   <script src="data.js"></script>
 
   <style>
-    body { margin: 0; overflow: hidden; }
+    body { margin: 0; overflow: hidden; font-family: system-ui; }
+
+    #story {
+      position: fixed;
+      bottom: 90px;
+      left: 0;
+      width: 100%;
+      max-height: 40%;
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      padding: 16px;
+      overflow-y: auto;
+      display: none;
+      z-index: 10;
+    }
+
+    #ui {
+      position: fixed;
+      bottom: 20px;
+      left: 0;
+      width: 100%;
+      padding: 0 14px;
+      display: flex;
+      gap: 10px;
+      z-index: 20;
+    }
+
+    button {
+      flex: 1;
+      padding: 16px 0;
+      font-size: 15px;
+      border-radius: 16px;
+      border: none;
+    }
+
+    #stampBtn { background: #ccc; color: #fff; }
+    #stampBtn.active { background: #ff6b00; }
+    #backBtn { background: #ddd; }
   </style>
 </head>
 
@@ -25,55 +62,76 @@
 
   <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
 
-  <!-- ✅ 각 타겟에 최소한의 child 필요 -->
-  <a-entity mindar-image-target="targetIndex: 0" data-id="gwangtong">
-    <a-box visible="false"></a-box>
-  </a-entity>
-
-  <a-entity mindar-image-target="targetIndex: 1" data-id="jangtong">
-    <a-box visible="false"></a-box>
-  </a-entity>
-
-  <a-entity mindar-image-target="targetIndex: 2" data-id="supyo">
-    <a-box visible="false"></a-box>
-  </a-entity>
-
-  <a-entity mindar-image-target="targetIndex: 3" data-id="samil">
-    <a-box visible="false"></a-box>
-  </a-entity>
-
-  <a-entity mindar-image-target="targetIndex: 4" data-id="sewoon">
-    <a-box visible="false"></a-box>
-  </a-entity>
+  <a-entity mindar-image-target="targetIndex: 0" data-id="gwangtong"><a-box visible="false"></a-box></a-entity>
+  <a-entity mindar-image-target="targetIndex: 1" data-id="jangtong"><a-box visible="false"></a-box></a-entity>
+  <a-entity mindar-image-target="targetIndex: 2" data-id="supyo"><a-box visible="false"></a-box></a-entity>
+  <a-entity mindar-image-target="targetIndex: 3" data-id="samil"><a-box visible="false"></a-box></a-entity>
+  <a-entity mindar-image-target="targetIndex: 4" data-id="sewoon"><a-box visible="false"></a-box></a-entity>
 
 </a-scene>
 
+<!-- 설명 패널 -->
+<div id="story">
+  <h3 id="spotName"></h3>
+  <div id="storyText"></div>
+</div>
+
+<!-- 하단 UI -->
+<div id="ui">
+  <button id="stampBtn" disabled>AR 인식 중...</button>
+  <button id="backBtn">돌아가기</button>
+</div>
+
 <script>
-const sceneEl = document.querySelector("#scene");
 const spotId = sessionStorage.getItem("currentSpot");
+const spot = SPOTS[spotId];
+
+const storyEl = document.getElementById("story");
+const stampBtn = document.getElementById("stampBtn");
+
+document.getElementById("spotName").innerText = spot.name;
+document.getElementById("storyText").innerHTML =
+  spot.story.map(t => `<p>${t}</p>`).join("");
+
+const sceneEl = document.querySelector("#scene");
 
 sceneEl.addEventListener("loaded", () => {
-  console.log("AR 씬 로드 완료");
-
   document.querySelectorAll("[mindar-image-target]").forEach(el => {
     const id = el.dataset.id;
 
     el.addEventListener("targetFound", () => {
-      console.log("🎯 인식됨:", id);
+      if (id !== spotId) return;
 
-      if (id !== spotId) {
-        console.log("❌ 현재 스팟 아님 → 무시");
-        return;
-      }
-
-      console.log("✅ 현재 스팟 인식 성공");
+      storyEl.style.display = "block";
+      stampBtn.disabled = false;
+      stampBtn.classList.add("active");
+      stampBtn.innerText = "스탬프 받기";
     });
 
     el.addEventListener("targetLost", () => {
-      console.log("❎ 인식 해제:", id);
+      if (id !== spotId) return;
+
+      storyEl.style.display = "none";
+      stampBtn.disabled = true;
+      stampBtn.classList.remove("active");
+      stampBtn.innerText = "AR 인식 중...";
     });
   });
 });
+
+stampBtn.onclick = () => {
+  const stamps = JSON.parse(localStorage.getItem("stamps") || "[]");
+  if (!stamps.includes(spotId)) {
+    stamps.push(spotId);
+    localStorage.setItem("stamps", JSON.stringify(stamps));
+    alert("🎉 스탬프 획득!");
+  }
+  location.href = "index.html";
+};
+
+document.getElementById("backBtn").onclick = () => {
+  location.href = "index.html";
+};
 </script>
 
 </body>
