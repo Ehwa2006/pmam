@@ -38,20 +38,24 @@
 let qr;
 let cameras = [];
 let currentCameraIndex = 0;
-let isStarted = false;
+let isStarting = false;
 let isProcessing = false;
 
-window.addEventListener("DOMContentLoaded", async () => {
-  cameras = await Html5Qrcode.getCameras();
-  if (!cameras.length) {
-    alert("카메라를 찾을 수 없습니다.");
-    return;
+async function startQr(cameraId) {
+  if (isStarting) return;
+  isStarting = true;
+
+  if (qr) {
+    try {
+      await qr.stop();
+      await qr.clear();
+    } catch (e) {}
   }
 
   qr = new Html5Qrcode("reader");
 
   await qr.start(
-    cameras[currentCameraIndex].id,
+    cameraId,
     {
       fps: 10,
       qrbox: { width: 220, height: 220 },
@@ -75,20 +79,28 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
   );
 
-  isStarted = true;
+  isStarting = false;
+}
 
-  // 🔄 카메라 전환 (절대 재시작 안 함)
+window.addEventListener("DOMContentLoaded", async () => {
+  cameras = await Html5Qrcode.getCameras();
+  if (!cameras.length) {
+    alert("카메라를 찾을 수 없습니다.");
+    return;
+  }
+
+  // ✅ 최초 시작 (보통 후면이 0번)
+  await startQr(cameras[currentCameraIndex].id);
+
   document.getElementById("switchCamBtn").onclick = async () => {
-    if (!isStarted || isProcessing) return;
+    if (isStarting || isProcessing) return;
 
     currentCameraIndex = (currentCameraIndex + 1) % cameras.length;
-
-    await qr.applyVideoConstraints({
-      deviceId: { exact: cameras[currentCameraIndex].id }
-    });
+    await startQr(cameras[currentCameraIndex].id);
   };
 });
 </script>
+
 
 
 
