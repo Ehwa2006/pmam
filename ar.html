@@ -17,6 +17,7 @@
 <body>
 
 <a-scene
+  id="scene"
   embedded
   mindar-image="imageTargetSrc: assets/targets/bridges.mind;"
   vr-mode-ui="enabled:false"
@@ -24,20 +25,53 @@
 
   <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
 
-  <a-entity mindar-image-target="targetIndex: 0" data-id="gwangtong"></a-entity>
-  <a-entity mindar-image-target="targetIndex: 1" data-id="jangtong"></a-entity>
-  <a-entity mindar-image-target="targetIndex: 2" data-id="supyo"></a-entity>
-  <a-entity mindar-image-target="targetIndex: 3" data-id="samil"></a-entity>
-  <a-entity mindar-image-target="targetIndex: 4" data-id="sewoon"></a-entity>
+  <!-- ✅ 각 타겟에 최소한의 child 필요 -->
+  <a-entity mindar-image-target="targetIndex: 0" data-id="gwangtong">
+    <a-box visible="false"></a-box>
+  </a-entity>
+
+  <a-entity mindar-image-target="targetIndex: 1" data-id="jangtong">
+    <a-box visible="false"></a-box>
+  </a-entity>
+
+  <a-entity mindar-image-target="targetIndex: 2" data-id="supyo">
+    <a-box visible="false"></a-box>
+  </a-entity>
+
+  <a-entity mindar-image-target="targetIndex: 3" data-id="samil">
+    <a-box visible="false"></a-box>
+  </a-entity>
+
+  <a-entity mindar-image-target="targetIndex: 4" data-id="sewoon">
+    <a-box visible="false"></a-box>
+  </a-entity>
 
 </a-scene>
 
 <script>
+const sceneEl = document.querySelector("#scene");
 const spotId = sessionStorage.getItem("currentSpot");
 
-document.querySelectorAll("[mindar-image-target]").forEach(el => {
-  el.addEventListener("targetFound", () => {
-    console.log("인식:", el.dataset.id);
+sceneEl.addEventListener("loaded", () => {
+  console.log("AR 씬 로드 완료");
+
+  document.querySelectorAll("[mindar-image-target]").forEach(el => {
+    const id = el.dataset.id;
+
+    el.addEventListener("targetFound", () => {
+      console.log("🎯 인식됨:", id);
+
+      if (id !== spotId) {
+        console.log("❌ 현재 스팟 아님 → 무시");
+        return;
+      }
+
+      console.log("✅ 현재 스팟 인식 성공");
+    });
+
+    el.addEventListener("targetLost", () => {
+      console.log("❎ 인식 해제:", id);
+    });
   });
 });
 </script>
