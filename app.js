@@ -2,22 +2,50 @@ const reader = new Html5Qrcode("reader");
 
 const stamps = JSON.parse(localStorage.getItem("stamps") || "[]");
 
+
+
 reader.start(
   { facingMode: "environment" },
-  { fps: 10, qrbox: 250 },
-  qrText => {
-    const spotId = parseInt(qrText.replace("SPOT_", ""));
+  { fps: 10, qrbox: 220 },
 
-    if (!stamps.includes(spotId)) {
-      stamps.push(spotId);
-      localStorage.setItem("stamps", JSON.stringify(stamps));
-      location.href = "ar.html";
+  qrText => {
+    const scanned = qrText.trim();
+    console.log("스캔된 QR:", scanned);
+
+    let spot = null;
+
+    // URL QR 대응
+    if (scanned.startsWith("http")) {
+      const URL_MAP = {
+        "https://qrly.org/T6Ta7n": "SPOT_IMUN"
+      };
+
+      const spotKey = URL_MAP[scanned];
+      if (spotKey) {
+        spot = Object.values(SPOTS).find(s => s.qr === spotKey);
+      }
     } else {
-      document.getElementById("status").innerText =
-        "이미 방문한 장소입니다.";
+      // 텍스트 QR 대응
+      spot = Object.values(SPOTS).find(s => s.qr === scanned);
     }
+
+    if (!spot) {
+      document.getElementById("status").innerText =
+        "등록되지 않은 장소입니다.";
+      return;
+    }
+
+    // ✅ 장소 인증만 수행
+    sessionStorage.setItem("currentSpot", spot.id);
+
+    // UX 피드백
+    navigator.vibrate?.(100);
+
+    // AR 페이지로 이동
+    location.href = "ar.html";
   }
 );
+
 const SPOTS = {
   imun: {
     id: "imun",
