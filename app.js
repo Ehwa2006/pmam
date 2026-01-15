@@ -115,3 +115,47 @@ new Html5Qrcode("reader").start(
 );
 
 navigator.vibrate?.(100);
+window.addEventListener("DOMContentLoaded", () => {
+
+  const readerElem = document.getElementById("reader");
+  const status = document.getElementById("status");
+
+  if (!readerElem) {
+    console.error("#reader 없음");
+    return;
+  }
+
+  const qr = new Html5Qrcode("reader");
+
+  Html5Qrcode.getCameras()
+    .then(cameras => {
+      if (!cameras.length) {
+        status.innerText = "카메라를 찾을 수 없습니다.";
+        return;
+      }
+
+      qr.start(
+        cameras[0].id,
+        { fps: 10, qrbox: 250 },
+        qrText => {
+          console.log("QR:", qrText);
+
+          const spot = Object.values(SPOTS)
+            .find(s => s.qr === qrText.trim());
+
+          if (!spot) {
+            status.innerText = "등록되지 않은 장소입니다.";
+            return;
+          }
+
+          sessionStorage.setItem("currentSpot", spot.id);
+          location.href = "ar.html";
+        }
+      );
+    })
+    .catch(err => {
+      console.error(err);
+      status.innerText = "카메라 접근 권한이 필요합니다.";
+    });
+
+});
