@@ -37,52 +37,66 @@
 <script>
 let currentCameraIndex = 0;
 let cameras = [];
-let qr = null;
+let qr;
+let isProcessing = false; // ✅ 핵심 가드
 
 async function startQr(cameraId) {
   if (qr) {
-    try { await qr.stop(); } catch(e) {}
+    try {
+      await qr.stop();
+      qr.clear();
+    } catch (e) {}
   }
 
   qr = new Html5Qrcode("reader");
 
   await qr.start(
     cameraId,
-    { fps: 10, qrbox: 250 },
-    qrText => {
-      const scanned = qrText.trim();
-      console.log("스캔:", scanned);
+    {
+      fps: 10,
+      qrbox: { width: 220, height: 220 }
+    },
+    async (qrText) => {
+      if (isProcessing) return; // 🔒 중복 방지
+      isProcessing = true;
 
+      const scanned = qrText.trim();
       const spot = Object.values(SPOTS).find(s => s.qr === scanned);
-      if (!spot) return;
+
+      if (!spot) {
+        isProcessing = false;
+        return;
+      }
+
+      console.log("✅ QR 인식:", spot.id);
 
       sessionStorage.setItem("currentSpot", spot.id);
-      (async () => {
-  await qr.stop();
-  qr.clear();
 
-  setTimeout(() => {
-    window.location.assign("ar.html");
-  }, 300);
-})();
+      try {
+        await qr.stop();
+        qr.clear();
+      } catch (e) {}
 
+      // ✅ 모든 모바일에서 안정적인 이동
+      setTimeout(() => {
+        window.location.assign("ar.html");
+      }, 400);
     }
   );
 }
 
 window.addEventListener("DOMContentLoaded", async () => {
   cameras = await Html5Qrcode.getCameras();
-  if (!cameras.length) return;
-
-  // 기본은 첫 카메라
   await startQr(cameras[currentCameraIndex].id);
 
   document.getElementById("switchCamBtn").onclick = async () => {
+    if (isProcessing) return;
     currentCameraIndex = (currentCameraIndex + 1) % cameras.length;
     await startQr(cameras[currentCameraIndex].id);
   };
 });
 </script>
+
 
 <script src="app.js"></script>
 <script src="index-stamps.js"></script>
