@@ -36,36 +36,20 @@
 <!-- ✅ QR 로직은 맨 아래 -->
 <script>
 let qr;
-let cameras = [];
-let currentCameraIndex = 0;
-let isStarting = false;
 let isProcessing = false;
 
-async function startQr(cameraId) {
-  if (isStarting) return;
-  isStarting = true;
-
-  if (qr) {
-    try {
-      await qr.stop();
-      await qr.clear();
-    } catch (e) {}
-  }
-
+window.addEventListener("DOMContentLoaded", async () => {
   qr = new Html5Qrcode("reader");
 
   await qr.start(
-    cameraId,
+    { facingMode: "environment" }, // ✅ 후면 강제
     {
       fps: 10,
-      qrbox: { width: 220, height: 220 },
-      aspectRatio: 1.0
+      qrbox: { width: 220, height: 220 }
     },
     (qrText) => {
       if (isProcessing) return;
       isProcessing = true;
-
-      navigator.vibrate?.(200);
 
       const scanned = qrText.trim();
       const spot = Object.values(SPOTS).find(s => s.qr === scanned);
@@ -74,30 +58,14 @@ async function startQr(cameraId) {
         return;
       }
 
+      navigator.vibrate?.(150);
+
       sessionStorage.setItem("currentSpot", spot.id);
+
+      // ❌ stop / clear 하지 마라 (iOS에서 버그 유발)
       window.location.href = "ar.html";
     }
   );
-
-  isStarting = false;
-}
-
-window.addEventListener("DOMContentLoaded", async () => {
-  cameras = await Html5Qrcode.getCameras();
-  if (!cameras.length) {
-    alert("카메라를 찾을 수 없습니다.");
-    return;
-  }
-
-  // ✅ 최초 시작 (보통 후면이 0번)
-  await startQr(cameras[currentCameraIndex].id);
-
-  document.getElementById("switchCamBtn").onclick = async () => {
-    if (isStarting || isProcessing) return;
-
-    currentCameraIndex = (currentCameraIndex + 1) % cameras.length;
-    await startQr(cameras[currentCameraIndex].id);
-  };
 });
 </script>
 
