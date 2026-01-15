@@ -79,14 +79,6 @@
 
 <body>
 
-<!-- ✅ AR Scene -->
-<a-scene
-  id="scene"
-  embedded
-  vr-mode-ui="enabled:false"
-  device-orientation-permission-ui="enabled:false">
-</a-scene>
-
 <!-- ===== Story ===== -->
 <div id="story">
   <h3>📍 <span id="spotName"></span></h3>
@@ -101,7 +93,7 @@
 
 <script>
 /* ===============================
-   스팟 정보 불러오기
+   스팟 정보 확인
 ================================ */
 const spotId = sessionStorage.getItem("currentSpot");
 
@@ -111,42 +103,6 @@ if (!spotId || !SPOTS[spotId]) {
 }
 
 const spot = SPOTS[spotId];
-const scene = document.getElementById("scene");
-
-/* ===============================
-   imun 대비 fallback 처리
-================================ */
-const targetSrc = spot.target || "assets/targets/imun.mind";
-const imageSrc  = spot.image  || (spot.comic ? spot.comic[0] : "");
-
-/* ===============================
-   AR 타겟 적용
-================================ */
-scene.setAttribute(
-  "mindar-image",
-  `imageTargetSrc: ${targetSrc};`
-);
-
-/* ===============================
-   AR 콘텐츠 삽입
-================================ */
-scene.innerHTML = `
-  <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
-
-  <a-entity id="target" mindar-image-target="targetIndex: 0">
-    <a-plane
-      position="0 0 0"
-      width="1"
-      height="1.4"
-      material="src: ${imageSrc}; transparent: true"
-      animation="property: scale;
-                 from: 0 0 0;
-                 to: 1 1 1;
-                 dur: 600;
-                 easing: easeOutBack">
-    </a-plane>
-  </a-entity>
-`;
 
 /* ===============================
    스토리 출력
@@ -156,12 +112,40 @@ document.getElementById("storyText").innerHTML =
   spot.story.map(t => `<p>${t}</p>`).join("");
 
 /* ===============================
+   AR Scene 생성 (🔥 핵심)
+================================ */
+document.body.insertAdjacentHTML("afterbegin", `
+<a-scene
+  mindar-image="imageTargetSrc: ${spot.target};"
+  embedded
+  vr-mode-ui="enabled:false"
+  device-orientation-permission-ui="enabled:false">
+
+  <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
+
+  <a-entity id="target" mindar-image-target="targetIndex: 0">
+    <a-plane
+      position="0 0 0"
+      width="1"
+      height="1.4"
+      material="src: ${spot.image}; transparent: true"
+      animation="property: scale;
+                 from: 0 0 0;
+                 to: 1 1 1;
+                 dur: 600;
+                 easing: easeOutBack">
+    </a-plane>
+  </a-entity>
+
+</a-scene>
+`);
+
+/* ===============================
    AR 인식 이벤트
 ================================ */
 const stampBtn = document.getElementById("stampBtn");
-const targetEntity = document.getElementById("target");
 
-targetEntity.addEventListener("targetFound", () => {
+document.addEventListener("targetFound", () => {
   stampBtn.disabled = false;
   stampBtn.classList.add("active");
   stampBtn.innerText = "스탬프 받기";
