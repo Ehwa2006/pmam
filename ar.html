@@ -56,11 +56,21 @@
 <a-scene
   id="scene"
   embedded
-  mindar-image="imageTargetSrc: assets/targets/bridges.mind;"
+  mindar-image="
+    imageTargetSrc: assets/targets/bridges.mind;
+    uiScanning: yes;
+    uiLoading: yes;
+  "
   vr-mode-ui="enabled:false"
-  device-orientation-permission-ui="enabled:false">
+  device-orientation-permission-ui="enabled:false"
+>
+  <a-camera
+  position="0 0 0"
+  look-controls="enabled:false"
+  camera="active: true"
+>
+</a-camera>
 
-  <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
 
   <a-entity mindar-image-target="targetIndex: 0" data-id="gwangtong">
     <a-plane width="1" height="1.4" visible="false"></a-plane>
@@ -83,6 +93,21 @@
   </a-entity>
 
 </a-scene>
+<script>
+AFRAME.registerComponent("force-back-camera", {
+  init: function () {
+    const sceneEl = this.el;
+
+    sceneEl.addEventListener("arReady", () => {
+      console.log("✅ AR Ready");
+    });
+
+    sceneEl.addEventListener("arError", (err) => {
+      console.error("❌ AR Error", err);
+    });
+  }
+});
+</script>
 
 
 <!-- 설명 패널 -->
