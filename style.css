@@ -36,6 +36,12 @@ main {
 }
 
 /* ===== QR Reader ===== */
+#reader {
+  width: 100%;
+  min-height: 320px;
+  background: #000;
+  border-radius: 16px;
+}
 
 
 /* ===== Status Text ===== */
