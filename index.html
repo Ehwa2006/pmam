@@ -1,27 +1,19 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <title>QR AR 스탬프 투어</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>QR 인증</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://unpkg.com/html5-qrcode"></script>
+  <script src="data.js"></script>
+  <script src="app.js" defer></script>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header>
-  <h1>📍 골목 스탬프 투어</h1>
-  <p>QR을 스캔하고 AR 미션을 완료하세요</p>
-</header>
+<h2>📷 QR을 스캔하세요</h2>
+<div id="reader"></div>
+<p id="status"></p>
 
-<main>
-  <div id="reader"></div>
-  <p id="status">QR을 스캔해주세요</p>
-</main>
-
-<script src="app.js"></script>
 </body>
 </html>
-<script src="https://unpkg.com/html5-qrcode"></script>
-<script src="data.js"></script>
-<script src="app.js"></script>
