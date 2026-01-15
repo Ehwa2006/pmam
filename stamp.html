@@ -17,22 +17,19 @@
   <p id="reward"></p>
 </main>
 
+<script src="data.js"></script>
 <script>
 const stamps = JSON.parse(localStorage.getItem("stamps") || "[]");
-const board = document.getElementById("stampBoard");
+const board = document.getElementById("board");
 
-for (let i = 1; i <= 5; i++) {
+Object.values(SPOTS).forEach(s => {
   const div = document.createElement("div");
   div.className = "stamp";
-  div.innerText = stamps.includes(i) ? "✔" : i;
+  div.textContent = stamps.includes(s.id) ? "✔" : s.name;
   board.appendChild(div);
-}
-
-if (stamps.length >= 5) {
-  document.getElementById("reward").innerText =
-    "🎉 완주! 상점에서 쿠폰을 받아가세요.";
-}
+});
 </script>
+
 
 </body>
 </html>

@@ -4,33 +4,93 @@
   <meta charset="UTF-8" />
   <title>AR 체험</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
 
-<header>
-  <h2>👻 골목 수호 캐릭터 등장!</h2>
-</header>
-
-<main class="ar-box">
-  <div class="ar-placeholder">
-    <p>[ AR 캐릭터가 나타나는 영역 ]</p>
-  </div>
-
-  <p class="ar-text">
-    “이 골목의 이야기를 들어볼래?”<br />
-    아래 버튼을 눌러 미션을 완료하세요.
-  </p>
-
-  <button onclick="completeMission()">AR 미션 완료</button>
-</main>
+  <!-- MindAR + A-Frame -->
+  <script src="https://unpkg.com/aframe"></script>
+<script src="https://unpkg.com/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+<script src="data.js"></script>
 
 <script>
-function completeMission() {
-  localStorage.setItem("arCompleted", "true");
+const spotId = sessionStorage.getItem("currentSpot");
+const spot = SPOTS[spotId];
+</script>
+
+  <style>
+    body { margin: 0; overflow: hidden; }
+    #ui {
+      position: fixed;
+      bottom: 20px;
+      width: 100%;
+      text-align: center;
+      z-index: 10;
+    }
+    button {
+      padding: 14px 24px;
+      font-size: 16px;
+      border-radius: 12px;
+      border: none;
+      background: #ff6b00;
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+
+<a-scene
+  mindar-image="imageTargetSrc: targets/spot1.mind;"
+  vr-mode-ui="enabled: false"
+  device-orientation-permission-ui="enabled: false"
+  embedded
+>
+
+  <!-- 카메라 -->
+  <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+  <!-- 타겟 인식 시 -->
+  <a-entity mindar-image-target="targetIndex: 0">
+
+    <!-- AR 오브젝트 -->
+    <a-box
+      position="0 0 0"
+      depth="0.2"
+      height="0.2"
+      width="0.2"
+      color="#ff6b00"
+      animation="property: rotation; to: 0 360 0; loop: true; dur: 3000">
+    </a-box>
+
+    <!-- 텍스트 -->
+    <a-text
+      value="골목의 수호자가 나타났다!"
+      position="0 0.3 0"
+      align="center"
+      color="#ffffff"
+      scale="0.5 0.5 0.5">
+    </a-text>
+
+  </a-entity>
+</a-scene>
+
+<!-- 하단 UI -->
+<div id="ui">
+  <button onclick="complete()">미션 완료</button>
+</div>
+
+<script>
+function complete() {
+  localStorage.setItem("arDone", "true");
   location.href = "stamps.html";
 }
 </script>
+<a-scene
+  id="scene"
+  vr-mode-ui="enabled:false"
+  embedded
+></a-scene>
+
+<div id="storyBox"></div>
+<button onclick="complete()">스탬프 받기</button>
 
 </body>
 </html>
