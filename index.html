@@ -35,20 +35,27 @@
 
 <!-- ✅ QR 로직은 맨 아래 -->
 <script>
-let currentCameraIndex = 0;
-let cameras = [];
 let qr;
-let isProcessing = false; // 🔒 중복 방지
+let cameras = [];
+let currentCameraIndex = 0;
+let isStarted = false;
+let isProcessing = false;
 
-async function startQr(cameraId) {
-  // ❌ stop / clear 절대 하지 말 것
+window.addEventListener("DOMContentLoaded", async () => {
+  cameras = await Html5Qrcode.getCameras();
+  if (!cameras.length) {
+    alert("카메라를 찾을 수 없습니다.");
+    return;
+  }
+
   qr = new Html5Qrcode("reader");
 
   await qr.start(
-    cameraId,
+    cameras[currentCameraIndex].id,
     {
       fps: 10,
-      qrbox: { width: 220, height: 220 }
+      qrbox: { width: 220, height: 220 },
+      aspectRatio: 1.0
     },
     (qrText) => {
       if (isProcessing) return;
@@ -58,39 +65,31 @@ async function startQr(cameraId) {
 
       const scanned = qrText.trim();
       const spot = Object.values(SPOTS).find(s => s.qr === scanned);
-
       if (!spot) {
         isProcessing = false;
         return;
       }
 
-      console.log("✅ QR 인식 성공:", spot.id);
-
       sessionStorage.setItem("currentSpot", spot.id);
-
-      // ✅ 이것만 해라 (100% 성공)
       window.location.href = "ar.html";
     }
   );
-}
 
-window.addEventListener("DOMContentLoaded", async () => {
-  cameras = await Html5Qrcode.getCameras();
-  if (!cameras.length) {
-    alert("카메라를 찾을 수 없습니다.");
-    return;
-  }
+  isStarted = true;
 
-  await startQr(cameras[currentCameraIndex].id);
-
+  // 🔄 카메라 전환 (절대 재시작 안 함)
   document.getElementById("switchCamBtn").onclick = async () => {
-    if (isProcessing) return;
+    if (!isStarted || isProcessing) return;
 
     currentCameraIndex = (currentCameraIndex + 1) % cameras.length;
-    await startQr(cameras[currentCameraIndex].id);
+
+    await qr.applyVideoConstraints({
+      deviceId: { exact: cameras[currentCameraIndex].id }
+    });
   };
 });
 </script>
+
 
 
 
