@@ -62,13 +62,28 @@
 
   <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
 
-  <a-entity mindar-image-target="targetIndex: 0" data-id="gwangtong"><a-box visible="false"></a-box></a-entity>
-  <a-entity mindar-image-target="targetIndex: 1" data-id="jangtong"><a-box visible="false"></a-box></a-entity>
-  <a-entity mindar-image-target="targetIndex: 2" data-id="supyo"><a-box visible="false"></a-box></a-entity>
-  <a-entity mindar-image-target="targetIndex: 3" data-id="samil"><a-box visible="false"></a-box></a-entity>
-  <a-entity mindar-image-target="targetIndex: 4" data-id="sewoon"><a-box visible="false"></a-box></a-entity>
+  <a-entity mindar-image-target="targetIndex: 0" data-id="gwangtong">
+    <a-plane width="1" height="1.4" visible="false"></a-plane>
+  </a-entity>
+
+  <a-entity mindar-image-target="targetIndex: 1" data-id="jangtong">
+    <a-plane width="1" height="1.4" visible="false"></a-plane>
+  </a-entity>
+
+  <a-entity mindar-image-target="targetIndex: 2" data-id="supyo">
+    <a-plane width="1" height="1.4" visible="false"></a-plane>
+  </a-entity>
+
+  <a-entity mindar-image-target="targetIndex: 3" data-id="samil">
+    <a-plane width="1" height="1.4" visible="false"></a-plane>
+  </a-entity>
+
+  <a-entity mindar-image-target="targetIndex: 4" data-id="sewoon">
+    <a-plane width="1" height="1.4" visible="false"></a-plane>
+  </a-entity>
 
 </a-scene>
+
 
 <!-- 설명 패널 -->
 <div id="story">
@@ -84,23 +99,30 @@
 
 <script>
 const spotId = sessionStorage.getItem("currentSpot");
-const spot = SPOTS[spotId];
+if (!spotId || !SPOTS[spotId]) {
+  alert("잘못된 접근입니다.");
+  location.href = "index.html";
+}
 
+const spot = SPOTS[spotId];
 const storyEl = document.getElementById("story");
 const stampBtn = document.getElementById("stampBtn");
+const sceneEl = document.querySelector("#scene");
 
 document.getElementById("spotName").innerText = spot.name;
 document.getElementById("storyText").innerHTML =
   spot.story.map(t => `<p>${t}</p>`).join("");
 
-const sceneEl = document.querySelector("#scene");
-
 sceneEl.addEventListener("loaded", () => {
   document.querySelectorAll("[mindar-image-target]").forEach(el => {
     const id = el.dataset.id;
+    const plane = el.querySelector("a-plane");
 
     el.addEventListener("targetFound", () => {
       if (id !== spotId) return;
+
+      plane.setAttribute("material", `src: ${spot.image}`);
+      plane.setAttribute("visible", true);
 
       storyEl.style.display = "block";
       stampBtn.disabled = false;
@@ -111,6 +133,7 @@ sceneEl.addEventListener("loaded", () => {
     el.addEventListener("targetLost", () => {
       if (id !== spotId) return;
 
+      plane.setAttribute("visible", false);
       storyEl.style.display = "none";
       stampBtn.disabled = true;
       stampBtn.classList.remove("active");
@@ -132,6 +155,7 @@ stampBtn.onclick = () => {
 document.getElementById("backBtn").onclick = () => {
   location.href = "index.html";
 };
+
 </script>
 
 </body>
