@@ -11,25 +11,37 @@
 
   <style>
     body { margin: 0; overflow: hidden; }
+
+    #ui {
+      position: fixed;
+      bottom: 20px;
+      width: 100%;
+      text-align: center;
+      z-index: 10;
+    }
+
+    #stampBtn {
+      padding: 16px 28px;
+      font-size: 16px;
+      border-radius: 14px;
+      border: none;
+      background: #ccc;
+      color: #fff;
+    }
+
+    #stampBtn.active {
+      background: #ff6b00;
+    }
+
     #story {
       position: fixed;
-      bottom: 0;
+      bottom: 80px;
       width: 100%;
       background: rgba(0,0,0,0.7);
       color: white;
       padding: 16px;
-      max-height: 45%;
+      max-height: 40%;
       overflow-y: auto;
-    }
-    button {
-      width: 100%;
-      padding: 14px;
-      margin-top: 8px;
-      font-size: 16px;
-      border: none;
-      background: #ff6b00;
-      color: white;
-      border-radius: 10px;
     }
   </style>
 </head>
@@ -37,7 +49,7 @@
 <body>
 
 <script>
-const spotId = sessionStorage.getItem("currentSpot");
+const spotId = sessionStorage.getItem("currentSpot") || "imun";
 const spot = SPOTS[spotId];
 </script>
 
@@ -49,13 +61,11 @@ const spot = SPOTS[spotId];
 
   <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
 
-  <!-- 이미지 인식되면 등장 -->
-  <a-entity mindar-image-target="targetIndex: 0">
+  <!-- AR 타겟 -->
+  <a-entity id="target" mindar-image-target="targetIndex: 0">
 
-    <!-- 4컷 만화 판넬 -->
     <a-plane
       position="0 0 0"
-      rotation="0 0 0"
       width="1"
       height="1.4"
       material="src: assets/images/img.jpg; transparent: true"
@@ -69,52 +79,50 @@ const spot = SPOTS[spotId];
   </a-entity>
 </a-scene>
 
-
+<!-- 스토리 -->
 <div id="story">
   <h3>📍 이문설농탕</h3>
   <div id="storyText"></div>
-  <button onclick="complete()">스탬프 받기</button>
+</div>
+
+<!-- 스탬프 UI -->
+<div id="ui">
+  <button id="stampBtn" disabled>AR 인식 중...</button>
 </div>
 
 <script>
+/* 스토리 출력 */
 document.getElementById("storyText").innerHTML =
   spot.story.map(s => `<p>${s}</p>`).join("");
 
-function complete() {
-  const stamps =
+const stampBtn = document.getElementById("stampBtn");
+
+/* AR 인식되면 버튼 활성화 */
+document
+  .querySelector("#target")
+  .addEventListener("targetFound", () => {
+    stampBtn.disabled = false;
+    stampBtn.classList.add("active");
+    stampBtn.innerText = "스탬프 받기";
+  });
+
+/* 스탬프 지급 */
+stampBtn.addEventListener("click", () => {
+  let stamps =
     JSON.parse(localStorage.getItem("stamps") || "[]");
-  if (!stamps.includes(spot.id)) {
-    stamps.push(spot.id);
-    localStorage.setItem("stamps", JSON.stringify(stamps));
+
+  if (stamps.includes(spotId)) {
+    alert("이미 스탬프를 받았습니다.");
+    return;
   }
+
+  stamps.push(spotId);
+  localStorage.setItem("stamps", JSON.stringify(stamps));
+
+  alert("🎉 이문설농탕 스탬프 획득!");
   location.href = "stamps.html";
-}
+});
 </script>
-<div id="ui">
-  <button id="stampBtn" disabled onclick="getStamp()">
-    스탬프 받기
-  </button>
-</div>
-<style>
-#ui {
-  position: fixed;
-  bottom: 20px;
-  width: 100%;
-  text-align: center;
-  z-index: 10;
-}
-#stampBtn {
-  padding: 16px 28px;
-  font-size: 16px;
-  border-radius: 14px;
-  border: none;
-  background: #ccc;
-  color: #fff;
-}
-#stampBtn.active {
-  background: #ff6b00;
-}
-</style>
 
 </body>
 </html>
