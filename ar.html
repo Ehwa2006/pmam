@@ -40,21 +40,20 @@ document.getElementById("storyText").innerHTML =
 const stampBtn = document.getElementById("stampBtn");
 
 /* ===============================
-   ⭐ 여기다 추가 ⭐
-   현재 스팟만 활성화
+   ✅ targetFound 처리 (정답)
 ================================ */
 document.querySelectorAll("[mindar-image-target]").forEach(el => {
   const id = el.dataset.id;
 
-  if (id !== spotId) {
-    el.setAttribute("visible", false);
-  } else {
-    el.addEventListener("targetFound", () => {
-      stampBtn.disabled = false;
-      stampBtn.classList.add("active");
-      stampBtn.innerText = "스탬프 받기";
-    });
-  }
+  el.addEventListener("targetFound", () => {
+    console.log("인식:", id);
+
+    if (id !== spotId) return; // ❗ 여기서 필터링
+
+    stampBtn.disabled = false;
+    stampBtn.classList.add("active");
+    stampBtn.innerText = "스탬프 받기";
+  });
 });
 
 /* ===============================
