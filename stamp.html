@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>내 스탬프</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header>
+  <h2>🟢 내 스탬프</h2>
+</header>
+
+<main>
+  <div class="stamp-board" id="stampBoard"></div>
+  <p id="reward"></p>
+</main>
+
+<script>
+const stamps = JSON.parse(localStorage.getItem("stamps") || "[]");
+const board = document.getElementById("stampBoard");
+
+for (let i = 1; i <= 5; i++) {
+  const div = document.createElement("div");
+  div.className = "stamp";
+  div.innerText = stamps.includes(i) ? "✔" : i;
+  board.appendChild(div);
+}
+
+if (stamps.length >= 5) {
+  document.getElementById("reward").innerText =
+    "🎉 완주! 상점에서 쿠폰을 받아가세요.";
+}
+</script>
+
+</body>
+</html>

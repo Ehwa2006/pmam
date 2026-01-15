@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>AR 체험</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header>
+  <h2>👻 골목 수호 캐릭터 등장!</h2>
+</header>
+
+<main class="ar-box">
+  <div class="ar-placeholder">
+    <p>[ AR 캐릭터가 나타나는 영역 ]</p>
+  </div>
+
+  <p class="ar-text">
+    “이 골목의 이야기를 들어볼래?”<br />
+    아래 버튼을 눌러 미션을 완료하세요.
+  </p>
+
+  <button onclick="completeMission()">AR 미션 완료</button>
+</main>
+
+<script>
+function completeMission() {
+  localStorage.setItem("arCompleted", "true");
+  location.href = "stamps.html";
+}
+</script>
+
+</body>
+</html>

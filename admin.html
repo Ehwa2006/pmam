@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>관리자 페이지</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header>
+  <h2>🔐 관리자 페이지</h2>
+</header>
+
+<main>
+  <button onclick="reset()">모든 사용자 데이터 초기화</button>
+</main>
+
+<script>
+function reset() {
+  localStorage.clear();
+  alert("초기화 완료");
+}
+</script>
+
+</body>
+</html>
