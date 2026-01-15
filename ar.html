@@ -49,25 +49,26 @@ const spot = SPOTS[spotId];
 
   <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
 
+  <!-- 이미지 인식되면 등장 -->
   <a-entity mindar-image-target="targetIndex: 0">
-    <!-- AR 오브젝트 -->
-    <a-cylinder
-      position="0 0 0"
-      radius="0.1"
-      height="0.2"
-      color="#ff6b00"
-      animation="property: rotation; to: 0 360 0; loop: true; dur: 3000">
-    </a-cylinder>
 
-    <a-text
-      value="1904"
-      position="0 0.25 0"
-      align="center"
-      color="#ffffff"
-      scale="0.5 0.5 0.5">
-    </a-text>
+    <!-- 4컷 만화 판넬 -->
+    <a-plane
+      position="0 0 0"
+      rotation="0 0 0"
+      width="1"
+      height="1.4"
+      material="src: assets/images/img.jpg; transparent: true"
+      animation="property: scale;
+                 from: 0 0 0;
+                 to: 1 1 1;
+                 dur: 600;
+                 easing: easeOutBack">
+    </a-plane>
+
   </a-entity>
 </a-scene>
+
 
 <div id="story">
   <h3>📍 이문설농탕</h3>
@@ -89,6 +90,31 @@ function complete() {
   location.href = "stamps.html";
 }
 </script>
+<div id="ui">
+  <button id="stampBtn" disabled onclick="getStamp()">
+    스탬프 받기
+  </button>
+</div>
+<style>
+#ui {
+  position: fixed;
+  bottom: 20px;
+  width: 100%;
+  text-align: center;
+  z-index: 10;
+}
+#stampBtn {
+  padding: 16px 28px;
+  font-size: 16px;
+  border-radius: 14px;
+  border: none;
+  background: #ccc;
+  color: #fff;
+}
+#stampBtn.active {
+  background: #ff6b00;
+}
+</style>
 
 </body>
 </html>

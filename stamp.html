@@ -1,35 +1,49 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>내 스탬프</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    .stamp {
+      padding: 20px;
+      margin: 10px 0;
+      border-radius: 12px;
+      background: #f5f5f5;
+      font-size: 18px;
+    }
+    .done {
+      background: #ff6b00;
+      color: white;
+    }
+  </style>
 </head>
 <body>
 
-<header>
-  <h2>🟢 내 스탬프</h2>
-</header>
+<h2>📍 나의 스탬프</h2>
+<div id="list"></div>
 
-<main>
-  <div class="stamp-board" id="stampBoard"></div>
-  <p id="reward"></p>
-</main>
-
-<script src="data.js"></script>
 <script>
-const stamps = JSON.parse(localStorage.getItem("stamps") || "[]");
-const board = document.getElementById("board");
+const list = document.getElementById("list");
+const stamps =
+  JSON.parse(localStorage.getItem("stamps") || "[]");
 
-Object.values(SPOTS).forEach(s => {
+const spots = {
+  imun: "이문설농탕",
+  spot2: "다음 장소"
+};
+
+Object.entries(spots).forEach(([id, name]) => {
   const div = document.createElement("div");
-  div.className = "stamp";
-  div.textContent = stamps.includes(s.id) ? "✔" : s.name;
-  board.appendChild(div);
+  div.className = "stamp" + (stamps.includes(id) ? " done" : "");
+  div.innerText = stamps.includes(id)
+    ? `✔ ${name}`
+    : `⬜ ${name}`;
+  list.appendChild(div);
 });
 </script>
-
+alert("📖 역사를 완주했습니다!");
 
 </body>
 </html>

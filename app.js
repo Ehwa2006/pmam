@@ -62,3 +62,4 @@ new Html5Qrcode("reader").start(
     location.href = "ar.html";
   }
 );
+navigator.vibrate?.(100);
