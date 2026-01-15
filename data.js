@@ -30,6 +30,7 @@ const SPOTS = {
     name: "광통교",
     year: "조선 태종",
     qr: "SPOT_GWANGTONG",
+    targetIndex: 0,
     target: "assets/targets/gwangtong.mind",
     image: "assets/images/gwangtong.jpg",
 
@@ -57,6 +58,7 @@ const SPOTS = {
     name: "장통교",
     year: "조선 후기",
     qr: "SPOT_JANGTONG",    
+    targetIndex: 1,
     target: "assets/targets/jangtong.mind",
     image: "assets/images/jangtong.jpg",
 
@@ -84,6 +86,7 @@ const SPOTS = {
     year: "조선 세종",
     qr: "SPOT_SUPYO",
     target: "assets/targets/supyo.mind",
+    targetIndex: 2,
     image: "assets/images/supyo.jpg",
 
     story: [
@@ -109,6 +112,7 @@ const SPOTS = {
     name: "삼일교",
     year: "1960년대",
     qr: "SPOT_SAMIL",
+    targetIndex: 3,
     target: "assets/targets/samil.mind",
     image: "assets/images/samil.jpg",
 
@@ -135,6 +139,7 @@ const SPOTS = {
     name: "세운교",
     year: "1970년대",
     qr: "SPOT_SEWOON",
+    targetIndex: 4,
     target: "assets/targets/sewoon.mind",
     image: "assets/images/sewoon.jpg",
     story: [

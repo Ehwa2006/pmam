@@ -116,16 +116,17 @@ document.getElementById("storyText").innerHTML =
 ================================ */
 document.body.insertAdjacentHTML("afterbegin", `
 <a-scene
-  mindar-image="imageTargetSrc: ${spot.target};"
+  mindar-image="imageTargetSrc: assets/targets/bridges.mind;"
   embedded
   vr-mode-ui="enabled:false"
   device-orientation-permission-ui="enabled:false">
 
   <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
 
-  <a-entity id="target" mindar-image-target="targetIndex: 0">
+  <a-entity id="target"
+    mindar-image-target="targetIndex: ${spot.targetIndex}">
+    
     <a-plane
-      position="0 0 0"
       width="1"
       height="1.4"
       material="src: ${spot.image}; transparent: true"
@@ -135,9 +136,10 @@ document.body.insertAdjacentHTML("afterbegin", `
                  dur: 600;
                  easing: easeOutBack">
     </a-plane>
-  </a-entity>
 
+  </a-entity>
 </a-scene>
+
 `);
 
 /* ===============================
