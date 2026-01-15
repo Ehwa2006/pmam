@@ -1,20 +1,27 @@
-// AR + 스토리 동적 생성
-const scene = document.getElementById("scene");
-scene.setAttribute(
-  "mindar-image",
-  `imageTargetSrc: ${spot.target};`
-);
+// 스팟 목록 불러오기
+const select = document.getElementById("spotSelect");
 
-document.getElementById("storyBox").innerHTML = `
-  <h3>${spot.name} (${spot.year})</h3>
-  ${spot.story.map(s => `<p>${s}</p>`).join("")}
-`;
+Object.values(SPOTS).forEach(spot => {
+  const option = document.createElement("option");
+  option.value = spot.id;
+  option.textContent = spot.name;
+  select.appendChild(option);
+});
 
-function complete() {
-  const stamps = JSON.parse(localStorage.getItem("stamps") || "[]");
-  if (!stamps.includes(spot.id)) {
-    stamps.push(spot.id);
-    localStorage.setItem("stamps", JSON.stringify(stamps));
-  }
-  location.href = "stamps.html";
+// 스팟 선택 시 기존 스토리 로드
+select.addEventListener("change", () => {
+  const spot = SPOTS[select.value];
+  document.getElementById("storyInput").value =
+    spot.story.join("\n");
+});
+
+// 저장
+function saveStory() {
+  const spot = SPOTS[select.value];
+  spot.story =
+    document.getElementById("storyInput")
+      .value.split("\n");
+
+  localStorage.setItem("SPOTS_DATA", JSON.stringify(SPOTS));
+  alert("저장 완료 (로컬 기준)");
 }

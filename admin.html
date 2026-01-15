@@ -1,27 +1,23 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>관리자 페이지</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
+  <h2>스토리 관리</h2>
 
-<header>
-  <h2>🔐 관리자 페이지</h2>
-</header>
+  <select id="spotSelect"></select>
 
-<main>
-  <button onclick="reset()">모든 사용자 데이터 초기화</button>
-</main>
+  <textarea id="storyInput" rows="8"
+    placeholder="스토리를 한 줄씩 입력"></textarea>
 
-<script>
-function reset() {
-  localStorage.clear();
-  alert("초기화 완료");
-}
-</script>
+  <button onclick="saveStory()">저장</button>
 
+  <script src="data.js"></script>
+  <script src="admin.js"></script>
 </body>
 </html>
