@@ -1,99 +1,6 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <title>AR</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- A-Frame & MindAR -->
-  <script src="https://unpkg.com/aframe"></script>
-  <script src="https://unpkg.com/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
-
-  <!-- Data -->
-  <script src="data.js"></script>
-
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      font-family: system-ui, sans-serif;
-    }
-
-    #story {
-      position: fixed;
-      bottom: 90px;
-      left: 0;
-      width: 100%;
-      max-height: 40%;
-      background: rgba(0,0,0,0.7);
-      color: #fff;
-      padding: 16px;
-      overflow-y: auto;
-      z-index: 10;
-    }
-
-    #story h3 {
-      margin-top: 0;
-      font-size: 16px;
-    }
-
-    #story p {
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    #ui {
-      position: fixed;
-      bottom: 20px;
-      left: 0;
-      width: 100%;
-      padding: 0 14px;
-      display: flex;
-      gap: 10px;
-      z-index: 20;
-    }
-
-    #ui button {
-      flex: 1;
-      padding: 16px 0;
-      font-size: 15px;
-      border-radius: 16px;
-      border: none;
-    }
-
-    #stampBtn {
-      background: #ccc;
-      color: #fff;
-    }
-
-    #stampBtn.active {
-      background: #ff6b00;
-    }
-
-    #backBtn {
-      background: #ddd;
-      color: #333;
-    }
-  </style>
-</head>
-
-<body>
-
-<!-- ===== Story ===== -->
-<div id="story">
-  <h3>📍 <span id="spotName"></span></h3>
-  <div id="storyText"></div>
-</div>
-
-<!-- ===== UI ===== -->
-<div id="ui">
-  <button id="stampBtn" disabled>AR 인식 중...</button>
-  <button id="backBtn">돌아가기</button>
-</div>
-
 <script>
 /* ===============================
-   스팟 정보 확인
+   스팟 정보 불러오기
 ================================ */
 const spotId = sessionStorage.getItem("currentSpot");
 
@@ -103,6 +10,25 @@ if (!spotId || !SPOTS[spotId]) {
 }
 
 const spot = SPOTS[spotId];
+const scene = document.getElementById("scene");
+
+/* ===============================
+   AR 씬 생성 (모든 다리 target 선언)
+================================ */
+scene.setAttribute(
+  "mindar-image",
+  "imageTargetSrc: assets/targets/bridges.mind;"
+);
+
+scene.innerHTML = `
+  <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
+
+  <a-entity mindar-image-target="targetIndex: 0" data-id="gwangtong"></a-entity>
+  <a-entity mindar-image-target="targetIndex: 1" data-id="jangtong"></a-entity>
+  <a-entity mindar-image-target="targetIndex: 2" data-id="supyo"></a-entity>
+  <a-entity mindar-image-target="targetIndex: 3" data-id="samil"></a-entity>
+  <a-entity mindar-image-target="targetIndex: 4" data-id="sewoon"></a-entity>
+`;
 
 /* ===============================
    스토리 출력
@@ -111,46 +37,24 @@ document.getElementById("spotName").innerText = spot.name;
 document.getElementById("storyText").innerHTML =
   spot.story.map(t => `<p>${t}</p>`).join("");
 
-/* ===============================
-   AR Scene 생성 (🔥 핵심)
-================================ */
-document.body.insertAdjacentHTML("afterbegin", `
-<a-scene
-  mindar-image="imageTargetSrc: assets/targets/bridges.mind;"
-  embedded
-  vr-mode-ui="enabled:false"
-  device-orientation-permission-ui="enabled:false">
-
-  <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
-
-  <a-entity id="target"
-    mindar-image-target="targetIndex: ${spot.targetIndex}">
-    
-    <a-plane
-      width="1"
-      height="1.4"
-      material="src: ${spot.image}; transparent: true"
-      animation="property: scale;
-                 from: 0 0 0;
-                 to: 1 1 1;
-                 dur: 600;
-                 easing: easeOutBack">
-    </a-plane>
-
-  </a-entity>
-</a-scene>
-
-`);
-
-/* ===============================
-   AR 인식 이벤트
-================================ */
 const stampBtn = document.getElementById("stampBtn");
 
-document.addEventListener("targetFound", () => {
-  stampBtn.disabled = false;
-  stampBtn.classList.add("active");
-  stampBtn.innerText = "스탬프 받기";
+/* ===============================
+   ⭐ 여기다 추가 ⭐
+   현재 스팟만 활성화
+================================ */
+document.querySelectorAll("[mindar-image-target]").forEach(el => {
+  const id = el.dataset.id;
+
+  if (id !== spotId) {
+    el.setAttribute("visible", false);
+  } else {
+    el.addEventListener("targetFound", () => {
+      stampBtn.disabled = false;
+      stampBtn.classList.add("active");
+      stampBtn.innerText = "스탬프 받기";
+    });
+  }
 });
 
 /* ===============================
@@ -178,6 +82,3 @@ document.getElementById("backBtn").onclick = () => {
   location.href = "index.html";
 };
 </script>
-
-</body>
-</html>

@@ -30,7 +30,7 @@ const SPOTS = {
     name: "광통교",
     year: "조선 태종",
     qr: "SPOT_GWANGTONG",
-    targetIndex: 1,
+    targetIndex: 0,
     target: "assets/targets/gwangtong.mind",
     image: "assets/images/gwangtong.jpg",
 
@@ -58,7 +58,7 @@ const SPOTS = {
     name: "장통교",
     year: "조선 후기",
     qr: "SPOT_JANGTONG",    
-    targetIndex: 2,
+    targetIndex: 1,
     target: "assets/targets/jangtong.mind",
     image: "assets/images/jangtong.jpg",
 
@@ -86,7 +86,7 @@ const SPOTS = {
     year: "조선 세종",
     qr: "SPOT_SUPYO",
     target: "assets/targets/supyo.mind",
-    targetIndex: 0,
+    targetIndex: 2,
     image: "assets/images/supyo.jpg",
 
     story: [
