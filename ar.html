@@ -19,7 +19,6 @@
       font-family: system-ui, sans-serif;
     }
 
-    /* ===== Story Panel ===== */
     #story {
       position: fixed;
       bottom: 90px;
@@ -43,7 +42,6 @@
       line-height: 1.5;
     }
 
-    /* ===== Bottom UI ===== */
     #ui {
       position: fixed;
       bottom: 20px;
@@ -81,7 +79,30 @@
 
 <body>
 
+<!-- ✅ AR Scene (빈 상태로 시작) -->
+<a-scene
+  id="scene"
+  embedded
+  vr-mode-ui="enabled:false"
+  device-orientation-permission-ui="enabled:false">
+</a-scene>
+
+<!-- ===== Story ===== -->
+<div id="story">
+  <h3>📍 <span id="spotName"></span></h3>
+  <div id="storyText"></div>
+</div>
+
+<!-- ===== UI ===== -->
+<div id="ui">
+  <button id="stampBtn" disabled>AR 인식 중...</button>
+  <button id="backBtn">돌아가기</button>
+</div>
+
 <script>
+/* ===============================
+   스팟 정보 불러오기
+================================ */
 const spotId = sessionStorage.getItem("currentSpot");
 
 if (!spotId || !SPOTS[spotId]) {
@@ -92,13 +113,17 @@ if (!spotId || !SPOTS[spotId]) {
 const spot = SPOTS[spotId];
 const scene = document.getElementById("scene");
 
-/* 🔑 스팟별 AR 타겟 적용 */
+/* ===============================
+   AR 타겟 적용
+================================ */
 scene.setAttribute(
   "mindar-image",
   `imageTargetSrc: ${spot.target};`
 );
 
-/* 🔑 AR 콘텐츠 동적 삽입 */
+/* ===============================
+   AR 콘텐츠 삽입
+================================ */
 scene.innerHTML = `
   <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
 
@@ -116,8 +141,50 @@ scene.innerHTML = `
     </a-plane>
   </a-entity>
 `;
-</script>
 
+/* ===============================
+   스토리 출력
+================================ */
+document.getElementById("spotName").innerText = spot.name;
+document.getElementById("storyText").innerHTML =
+  spot.story.map(t => `<p>${t}</p>`).join("");
+
+/* ===============================
+   AR 인식 이벤트
+================================ */
+const stampBtn = document.getElementById("stampBtn");
+
+scene.addEventListener("targetFound", () => {
+  stampBtn.disabled = false;
+  stampBtn.classList.add("active");
+  stampBtn.innerText = "스탬프 받기";
+});
+
+/* ===============================
+   스탬프 처리
+================================ */
+stampBtn.addEventListener("click", () => {
+  const stamps = JSON.parse(localStorage.getItem("stamps") || "[]");
+
+  if (stamps.includes(spotId)) {
+    alert("이미 스탬프를 받았습니다.");
+    return;
+  }
+
+  stamps.push(spotId);
+  localStorage.setItem("stamps", JSON.stringify(stamps));
+
+  alert("🎉 스탬프 획득!");
+  location.href = "index.html";
+});
+
+/* ===============================
+   뒤로가기
+================================ */
+document.getElementById("backBtn").onclick = () => {
+  location.href = "index.html";
+};
+</script>
 
 </body>
 </html>
