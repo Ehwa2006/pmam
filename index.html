@@ -14,11 +14,46 @@
 <header>
   <h1>📍 골목 AR 스탬프 투어</h1>
   <p>QR을 스캔하고 이야기를 수집하세요</p>
-  <button id="switchCamBtn">🔄 카메라 전환</button>
+  
 
 </header>
 
 <main>
+    <button id="switchCamBtn">🔄 카메라 전환</button>
+     <script>
+    let currentCameraIndex = 0;
+    let cameras = [];
+    let qr;
+
+    async function startQr(cameraId) {
+      if (qr) await qr.stop();
+
+      qr = new Html5Qrcode("reader");
+      await qr.start(
+        cameraId,
+        { fps: 10, qrbox: 250 },
+        qrText => {
+          const scanned = qrText.trim();
+          const spot = Object.values(SPOTS).find(s => s.qr === scanned);
+          if (!spot) return;
+
+          sessionStorage.setItem("currentSpot", spot.id);
+          qr.stop();
+          location.href = "ar.html";
+        }
+      );
+    }
+
+    window.addEventListener("DOMContentLoaded", async () => {
+      cameras = await Html5Qrcode.getCameras();
+      await startQr(cameras[currentCameraIndex].id);
+
+      document.getElementById("switchCamBtn").onclick = async () => {
+        currentCameraIndex = (currentCameraIndex + 1) % cameras.length;
+        await startQr(cameras[currentCameraIndex].id);
+      };
+    });
+  </script>
   <section id="qrSection">
     <div id="reader"></div>
     <p id="status">카메라 준비 중...</p>
