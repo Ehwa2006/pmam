@@ -8,8 +8,9 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   // URL → SPOT 매핑
   const URL_MAP = {
-    "https://qrly.org/T6Ta7n": "SPOT_IMUN"
-  };
+  "https://qrly.org/ulf0vw": "SPOT_IMUN"
+};
+
 
   try {
     const cameras = await Html5Qrcode.getCameras();
