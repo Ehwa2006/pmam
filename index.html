@@ -57,8 +57,15 @@ async function startQr(cameraId) {
       if (!spot) return;
 
       sessionStorage.setItem("currentSpot", spot.id);
-      qr.stop();
-      location.href = "ar.html";
+      (async () => {
+  await qr.stop();
+  qr.clear();
+
+  setTimeout(() => {
+    window.location.assign("ar.html");
+  }, 300);
+})();
+
     }
   );
 }
