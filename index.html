@@ -48,7 +48,19 @@ async function startQr(cameraId) {
 
   await qr.start(
     cameraId,
-    { fps: 10, qrbox: 250 },
+    await qr.start(
+  cameraId,
+  {
+    fps: 10,
+    qrbox: (w, h) => {
+      const size = Math.min(w, h);
+      return Math.floor(size * 0.6);
+    },
+    aspectRatio: 1.0
+  },
+  onScan
+),
+
     qrText => {
       const scanned = qrText.trim();
       console.log("스캔:", scanned);
