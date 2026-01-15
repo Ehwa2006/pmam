@@ -79,7 +79,7 @@
 
 <body>
 
-<!-- ✅ AR Scene (빈 상태로 시작) -->
+<!-- ✅ AR Scene -->
 <a-scene
   id="scene"
   embedded
@@ -114,11 +114,17 @@ const spot = SPOTS[spotId];
 const scene = document.getElementById("scene");
 
 /* ===============================
+   imun 대비 fallback 처리
+================================ */
+const targetSrc = spot.target || "assets/targets/imun.mind";
+const imageSrc  = spot.image  || (spot.comic ? spot.comic[0] : "");
+
+/* ===============================
    AR 타겟 적용
 ================================ */
 scene.setAttribute(
   "mindar-image",
-  `imageTargetSrc: ${spot.target};`
+  `imageTargetSrc: ${targetSrc};`
 );
 
 /* ===============================
@@ -132,7 +138,7 @@ scene.innerHTML = `
       position="0 0 0"
       width="1"
       height="1.4"
-      material="src: ${spot.image}; transparent: true"
+      material="src: ${imageSrc}; transparent: true"
       animation="property: scale;
                  from: 0 0 0;
                  to: 1 1 1;
@@ -153,8 +159,9 @@ document.getElementById("storyText").innerHTML =
    AR 인식 이벤트
 ================================ */
 const stampBtn = document.getElementById("stampBtn");
+const targetEntity = document.getElementById("target");
 
-scene.addEventListener("targetFound", () => {
+targetEntity.addEventListener("targetFound", () => {
   stampBtn.disabled = false;
   stampBtn.classList.add("active");
   stampBtn.innerText = "스탬프 받기";
