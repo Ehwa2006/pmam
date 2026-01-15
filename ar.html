@@ -1,26 +1,27 @@
-<script>
-/* ===============================
-   스팟 정보 불러오기
-================================ */
-const spotId = sessionStorage.getItem("currentSpot");
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>AR</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-if (!spotId || !SPOTS[spotId]) {
-  alert("잘못된 접근입니다.");
-  location.href = "index.html";
-}
+  <script src="https://unpkg.com/aframe"></script>
+  <script src="https://unpkg.com/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+  <script src="data.js"></script>
 
-const spot = SPOTS[spotId];
-const scene = document.getElementById("scene");
+  <style>
+    body { margin: 0; overflow: hidden; }
+  </style>
+</head>
 
-/* ===============================
-   AR 씬 생성 (모든 다리 target 선언)
-================================ */
-scene.setAttribute(
-  "mindar-image",
-  "imageTargetSrc: assets/targets/bridges.mind;"
-);
+<body>
 
-scene.innerHTML = `
+<a-scene
+  embedded
+  mindar-image="imageTargetSrc: assets/targets/bridges.mind;"
+  vr-mode-ui="enabled:false"
+  device-orientation-permission-ui="enabled:false">
+
   <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
 
   <a-entity mindar-image-target="targetIndex: 0" data-id="gwangtong"></a-entity>
@@ -28,56 +29,18 @@ scene.innerHTML = `
   <a-entity mindar-image-target="targetIndex: 2" data-id="supyo"></a-entity>
   <a-entity mindar-image-target="targetIndex: 3" data-id="samil"></a-entity>
   <a-entity mindar-image-target="targetIndex: 4" data-id="sewoon"></a-entity>
-`;
 
-/* ===============================
-   스토리 출력
-================================ */
-document.getElementById("spotName").innerText = spot.name;
-document.getElementById("storyText").innerHTML =
-  spot.story.map(t => `<p>${t}</p>`).join("");
+</a-scene>
 
-const stampBtn = document.getElementById("stampBtn");
+<script>
+const spotId = sessionStorage.getItem("currentSpot");
 
-/* ===============================
-   ✅ targetFound 처리 (정답)
-================================ */
 document.querySelectorAll("[mindar-image-target]").forEach(el => {
-  const id = el.dataset.id;
-
   el.addEventListener("targetFound", () => {
-    console.log("인식:", id);
-
-    if (id !== spotId) return; // ❗ 여기서 필터링
-
-    stampBtn.disabled = false;
-    stampBtn.classList.add("active");
-    stampBtn.innerText = "스탬프 받기";
+    console.log("인식:", el.dataset.id);
   });
 });
-
-/* ===============================
-   스탬프 처리
-================================ */
-stampBtn.addEventListener("click", () => {
-  const stamps = JSON.parse(localStorage.getItem("stamps") || "[]");
-
-  if (stamps.includes(spotId)) {
-    alert("이미 스탬프를 받았습니다.");
-    return;
-  }
-
-  stamps.push(spotId);
-  localStorage.setItem("stamps", JSON.stringify(stamps));
-
-  alert("🎉 스탬프 획득!");
-  location.href = "index.html";
-});
-
-/* ===============================
-   뒤로가기
-================================ */
-document.getElementById("backBtn").onclick = () => {
-  location.href = "index.html";
-};
 </script>
+
+</body>
+</html>
