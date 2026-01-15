@@ -179,3 +179,29 @@ main {
   background: #ddd;
   color: #333;
 }
+#myStamps {
+  margin-top: 24px;
+  background: #fff;
+  border-radius: 18px;
+  padding: 14px 16px;
+}
+
+#myStamps h2 {
+  margin: 0 0 12px;
+  font-size: 16px;
+}
+
+#stampList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.stamp-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: #fafafa;
+  border-radius: 12px;
+  font-size: 14px;
+}
